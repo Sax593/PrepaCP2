@@ -1,36 +1,30 @@
-import Counter from "../components/Counter";
-import logo from "../assets/logo.svg";
+import PokeCard from "@components/PokeCard/PokeCard";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [pokeCard, setPokeCard] = useState();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/pokemon");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPokeCard(data);
+      } catch (err) {
+        console.error("Fetch error", err);
+      }
+    };
+    fetchData();
+  }, []);
   return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <p>Hello Vite + React !</p>
-
-      <Counter />
-
-      <p>
-        Edit <code>App.jsx</code> and save to test HMR updates.
-      </p>
-      <p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        {" | "}
-        <a
-          className="App-link"
-          href="https://vitejs.dev/guide/features.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Vite Docs
-        </a>
-      </p>
-    </header>
+    <>
+      <h1>Mes pokemons</h1>
+      {pokeCard &&
+        pokeCard.map((element) => {
+          return <PokeCard pokemon={element} />;
+        })}
+    </>
   );
 }
